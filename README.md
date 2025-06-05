@@ -253,4 +253,6 @@ Common issues and solutions:
    - Check network connectivity
    - Validate database permissions
 
+## Support
 
+For support, please contact [nihaldm65@gmail.com]
