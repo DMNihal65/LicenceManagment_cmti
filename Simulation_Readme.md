@@ -1,19 +1,37 @@
-# License Management System - Simulation Documentation
+# License Management System - Simulation
 
 ## Table of Contents
-1. [Overview](#overview)
-2. [Purpose](#purpose)
-3. [Architecture](#architecture)
-4. [Components](#components)
-5. [Key Features](#key-features)
-6. [Installation](#installation)
-7. [Configuration](#configuration)
-8. [Usage](#usage)
-9. [Workflow](#workflow)
-10. [Error Handling](#error-handling)
-11. [Security Considerations](#security-considerations)
-12. [Troubleshooting](#troubleshooting)
-13. [Support](#support)
+1. [Quick Start](#quick-start)
+2. [Overview](#overview)
+3. [Prerequisites](#prerequisites)
+4. [Installation](#installation)
+5. [Configuration](#configuration)
+6. [Running the Simulation](#running-the-simulation)
+7. [Understanding the Output](#understanding-the-output)
+8. [Troubleshooting](#troubleshooting)
+9. [FAQ](#faq)
+
+## Quick Start
+
+1. Ensure you have Node.js installed (v14+)
+2. Clone the repository
+3. Navigate to the LMS_Simulation directory
+4. Run: `node activation.js`
+
+## Overview
+
+This simulation demonstrates the license activation and validation flow of the License Management System. It includes:
+
+- License activation with machine binding
+- Local license validation
+- Periodic license checks
+- Error handling and logging
+
+## Prerequisites
+
+- Node.js v14 or higher
+- A valid license key from the LMS backend
+- Network access to the LMS backend API (default: http://172.18.7.89:5000)
 
 ## Overview
 
@@ -83,43 +101,115 @@ The simulation follows a simple client-server architecture:
 
 ## Installation
 
-### Prerequisites
-- Node.js (v14 or higher)
-- npm (v6 or higher)
-- Access to the LMS backend API
-
-### Steps
-
-1. Clone the repository:
+1. Navigate to the project directory:
    ```bash
-   git clone <repository-url>
    cd LMS_Simulation
    ```
 
-2. Install dependencies:
+2. Install the required dependencies:
    ```bash
    npm install
    ```
 
 ## Configuration
 
-### Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```env
-API_URL=http://your-backend-url/api/licenses
-LICENSE_FILE_PATH=./license.txt
-LICENSE_KEY=your-license-key
+### 1. Update License Key
+Edit `activation.js` and set your license key:
+```javascript
+const LICENSE_KEY = 'your-license-key-here';
 ```
 
-### Configuration Options
+### 2. Verify API URL
+Ensure the API URL in `activation.js` points to your LMS backend:
+```javascript
+const API_URL = 'http://172.18.7.89:5000/api/licenses';
+```
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `API_URL` | Base URL of the license management API | `http://localhost:5000/api/licenses` |
-| `LICENSE_FILE_PATH` | Path to store the license file | `./license.txt` |
-| `LICENSE_KEY` | Your license key | (required) |
+### 3. License File Location
+By default, the license file is stored as `license.txt` in the simulation directory.
+
+## Running the Simulation
+
+### First Run (Activation)
+1. Ensure you have a valid license key
+2. Run the simulation:
+   ```bash
+   node activation.js
+   ```
+3. The script will:
+   - Generate a machine ID
+   - Attempt to activate the license
+   - Save the activation details to `license.txt`
+
+### Subsequent Runs
+- The simulation will automatically validate the existing license
+- No activation is needed unless the machine changes
+
+## Understanding the Output
+
+### Successful Activation
+```
+🚀 Starting license activation process...
+Checking for existing license...
+No existing license file found, attempting to activate...
+Attempting to activate license: your-license-key
+Entering activateLicense function
+Request body: { licenseKey: 'your-license-key', machineId: '...' }
+License activation response: { message: 'License activated successfully', ... }
+✅ License activated successfully. Access granted to the application.
+🚀 Application started successfully!
+```
+
+### Already Activated
+```
+🚀 Starting license activation process...
+Checking for existing license...
+License file found, verifying...
+✅ License is already activated and valid. Access granted to the application.
+🚀 Application started successfully!
+```
+
+### Error Cases
+- **Invalid License**: `❌ Failed to activate the license: Invalid license key`
+- **Network Issues**: `❌ Failed to activate the license: Network Error`
+- **Server Error**: `❌ Failed to activate the license: Internal Server Error`
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Machine ID Mismatch**
+   - Error: `License already activated on this machine`
+   - Solution: Deactivate the license from the previous machine or use a different license key
+
+2. **Network Errors**
+   - Error: `Network Error` or `ECONNREFUSED`
+   - Solution: Verify the API URL and ensure the backend is running
+
+3. **Invalid License**
+   - Error: `Invalid license key`
+   - Solution: Double-check the license key and ensure it's active
+
+4. **Permission Issues**
+   - Error: `EACCES` when writing license file
+   - Solution: Ensure the application has write permissions to the directory
+
+## FAQ
+
+### Q: How do I get a new license key?
+A: Contact your system administrator to generate a new license key.
+
+### Q: What happens if I change my hardware?
+A: The license is tied to the machine ID. You'll need to deactivate the license from the old machine first.
+
+### Q: How do I check if my license is valid?
+A: The application performs periodic validations. You can also check the `license.txt` file for activation details.
+
+### Q: Can I run this on multiple machines?
+A: Each machine requires its own license key unless your license allows multiple activations.
+
+### Q: How do I completely reset the activation?
+A: Delete the `license.txt` file and restart the application to trigger a new activation.
 
 ## Usage
 
